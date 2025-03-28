@@ -1,7 +1,7 @@
 import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Parallax } from "~/components/router-head/parallax";
-
+import { SvgMap } from "~/components/router-head/svgMap";
 export default component$(() => {
   const isVisible = useSignal(false);
 
@@ -10,9 +10,9 @@ export default component$(() => {
     if (!target) return;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        isVisible.value = entry.intersectionRatio >= 0.1;
+        isVisible.value = entry.intersectionRatio >= 0.01;
       },
-      {threshold: 0.1}
+      {threshold: 0.01}
     );
 
     observer.observe(target);
@@ -20,7 +20,7 @@ export default component$(() => {
   });
 
   return (
-    <>  
+    <div class="relative overflow-hidden bg-stone-900">  
       <div id="parallax-container"
         style={{
           ...styles.fadeSlideUp,
@@ -29,8 +29,10 @@ export default component$(() => {
       >
         <Parallax />
       </div>
-      <div class="bg-stone-900 h-[150dvh]"></div>
-    </>
+      <div class="relative mt-[-50vh]">
+        <SvgMap />
+      </div>
+    </div>
   );
 });
 

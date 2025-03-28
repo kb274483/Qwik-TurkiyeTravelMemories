@@ -4,6 +4,7 @@ export const Parallax = component$(() => {
   const imgArr = useSignal<number[]>([2,3,4,5]);
   const isMobile = useSignal(false);
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     const el = document.querySelector('.hotairBalloon') as HTMLDivElement;
     let t = 0;
@@ -18,6 +19,7 @@ export const Parallax = component$(() => {
     float();
   });
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     const checkMobile = () => {
       const width = window.innerWidth;
@@ -52,7 +54,8 @@ export const Parallax = component$(() => {
 
   return (
     <>
-      <div class="parallax bg-stone-900" style={styles.parallax}>
+      <div class="parallax from-[#2c111a] via-[#2c111a] to-stone-900 bg-gradient-to-b relative" style={styles.parallax}>
+        
         <div id="parallax-title"
           class="absolute top-0 left-0 z-10 w-full h-1/2 flex flex-col justify-center items-center"
         >
