@@ -1,10 +1,13 @@
-import { component$, useVisibleTask$, useSignal } from '@builder.io/qwik';
+import { component$, useVisibleTask$, useSignal, $, useTask$ } from '@builder.io/qwik';
 
 export const SvgMap = component$(() => {
   const isVisible = useSignal(false);
+  const isDrawing = useSignal(false);
 
-  // eslint-disable-next-line qwik/no-use-visible-task
-  useVisibleTask$( async () => {
+  const loadAndDrawSvg = $(async () => {
+    if (isDrawing.value) return;
+    isDrawing.value = true;
+    
     const res = await fetch('/trukiye-symbol.svg');
     const svg = await res.text();
 
@@ -65,8 +68,34 @@ export const SvgMap = component$(() => {
         { style: CSSStyleDeclaration }
       ).style.animation = `drawLine 3s forwards ease-in-out`;
     });
+  });
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const mapContainer = document.getElementById('map-container');
+    if (!mapContainer) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible.value = entry.intersectionRatio >= 0.01;
+        if (isVisible.value && !isDrawing.value) {
+          loadAndDrawSvg();
+        }
+      },
+      {threshold: 0.01}
+    );
+
+    observer.observe(mapContainer);
+    return () => observer.disconnect();
+  });
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useTask$(async ({ track }) => {
+    track(() => isVisible.value);
     
-    isVisible.value = true;
+    if (isVisible.value && !isDrawing.value) {
+      loadAndDrawSvg();
+    }
   });
 
   return (
