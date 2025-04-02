@@ -5,7 +5,9 @@ import { SvgMap } from "~/components/router-head/svgMap";
 export default component$(() => {
   const isVisible = useSignal(false);
 
+  // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
+    window.scrollTo({top: 0, behavior: 'smooth'});
     const target = document.getElementById('parallax-container');
     if (!target) return;
     const observer = new IntersectionObserver(
@@ -29,7 +31,7 @@ export default component$(() => {
       >
         <Parallax />
       </div>
-      <div class="relative mt-[-50vh]">
+      <div class="relative mt-[-100vh]">
         <SvgMap />
       </div>
     </div>

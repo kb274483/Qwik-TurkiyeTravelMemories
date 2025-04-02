@@ -89,8 +89,8 @@ export const Parallax = component$(() => {
             data-speed={
               i === 2 ?
               '50' : i === 3 ? 
-              '100' : i === 4 ? 
-              '150' : '200'
+              '110' : i === 4 ? 
+              '170' : '220'
             }
           >
             <img
