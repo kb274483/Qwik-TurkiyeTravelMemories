@@ -98,7 +98,7 @@ export const SvgMap = component$(() => {
       (
         path as SVGElement &
         { style: CSSStyleDeclaration }
-      ).style.animation = `drawLine 3s forwards ease-in-out`;
+      ).style.animation = `drawLine 1.5s forwards ease-in-out`;
     });
   });
 
