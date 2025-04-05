@@ -6,7 +6,7 @@ export const Parallax = component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    const el = document.querySelector('.hotairBalloon') as HTMLDivElement;
+    const el = document.querySelector('.hotAirBalloon') as HTMLDivElement;
     let t = 0;
     const float = () => {
       t += 0.02;
@@ -29,13 +29,14 @@ export const Parallax = component$(() => {
 
     const scroll = () => {
       const scrollY = window.scrollY;
-      const hotairBalloon = document.querySelector('.hotairBalloon') as HTMLDivElement;
+      const scrollLimit = window.innerHeight * 0.35;
+      const hotAirBalloon = document.querySelector('.hotAirBalloon') as HTMLDivElement;
       const parallaxItems = document.querySelectorAll('.parallax-item') as NodeListOf<HTMLElement>;
       const parallaxTitle = document.getElementById('parallax-title') as HTMLDivElement;
 
-      if(scrollY < 350) {
+      if(scrollY < scrollLimit) {
         parallaxTitle.style.transform = `translate3d(0, -${scrollY * 0.6}px, 0)`;
-        hotairBalloon.style.transform = `translate3d(0, -${scrollY * 0.5}px, 0)`;
+        hotAirBalloon.style.transform = `translate3d(0, -${scrollY * 0.5}px, 0)`;
         parallaxItems.forEach((item) => {
           const speed = item.getAttribute('data-speed');
           if (speed) {
@@ -67,14 +68,14 @@ export const Parallax = component$(() => {
           </h3>
         </div>
         <div data-speed="200"  
-          class="parallax-item hotairBalloon" 
+          class="parallax-item hotAirBalloon" 
           style={{
-            ...styles.parallaxItem, ...styles.hotairBalloon
+            ...styles.parallaxItem, ...styles.hotAirBalloon
           }}
         >
           <img 
             src="/parallaxImg/1.webp"
-            alt="hotairBalloon" 
+            alt="hotAirBalloon" 
             style={styles.image} 
           />
         </div>
@@ -133,7 +134,7 @@ const styles = {
   ground: {
     zIndex: "15",
   },
-  hotairBalloon: {
+  hotAirBalloon: {
     zIndex: "5",
   },
   image: {
