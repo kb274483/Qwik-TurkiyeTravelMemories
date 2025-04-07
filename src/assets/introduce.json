@@ -1,0 +1,50 @@
+{
+  "alacati":{
+    "title": "The Beginning of the Journey",
+    "title_zh": "旅程的開始",
+    "text": "Departing from Taiwan, transferring through Singapore, and after more than ten hours, we finally arrived in Istanbul—the capital of the world. Soon after, we took another flight to Alacati, a Greek-style town beside the Aegean Sea.",
+    "text_zh": "從台灣出發，經新加坡轉機，經過十多個小時的飛行，我們終於抵達了世界之都伊斯坦堡。緊接著我們又乘坐另一班飛機前往位於愛琴海旁的希臘風格小鎮阿拉恰特。"
+  },
+  "sirince":{
+    "title": "Sirince - The Old Houses of Ottoman",
+    "title_zh": "席琳傑 - 鄂圖曼老房子",
+    "text": "The old houses of Ottoman are the most distinctive feature of Sirince. The houses are built with local materials such as stone and wood, and the walls are decorated with intricate patterns and colorful tiles.",
+    "text_zh": "席琳傑的鄂圖曼老房子是這裡最顯著的特色。這些房子是用當地材料如石頭和木材建造的，牆壁上裝飾著精緻的圖案和彩色的磁磚。"
+  },
+  "efes":{
+    "title": "Ephesus - The Prosperity of Ancient Rome",
+    "title_zh": "以弗所 - 古羅馬的繁榮",
+    "text": "Though not in Rome, the prosperity of ancient Rome remains evident in every corner of Ephesus. It was once one of the most important cities of the Roman Empire in Asia Minor, famous for its magnificent library and theater, and was a crucial hub for trade between East and West.",
+    "text_zh": "雖然不在羅馬，但古羅馬的繁榮在以弗所的每個角落依然清晰可見。它曾是小亞細亞地區羅馬帝國最重要的城市之一，以其宏偉的圖書館和劇院而聞名，並且是東西方貿易的重要樞紐。"
+  },
+  "pamukkale":{
+    "title": "Entering the Snow-White Thermal Wonderland - Pamukkale",
+    "title_zh": "步入雪白的溫泉仙境 - 棉花堡",
+    "text": "Once a Roman spa retreat, today Pamukkale is one of Turkey's most famous UNESCO World Heritage sites. Its limestone formations shaped by mineral-rich thermal waters over thousands of years create a unique cotton-like white landscape.",
+    "text_zh": "曾是羅馬人溫泉度假勝地，如今的棉花堡是土耳其最著名的聯合國教科文組織世界遺產之一。其石灰岩地形由富含礦物質的溫泉水歷經數千年塑造而成，創造出獨特的棉花般白色景觀。"
+  },
+  "antalya":{
+    "title": "Antalya - Pearl by the Mediterranean",
+    "title_zh": "安塔利亞 - 地中海明珠",
+    "text": "Nestled alongside the crystal-clear Mediterranean Sea, Antalya preserves numerous ruins from Roman times. The most renowned among these is Hadrian's Gate, built in honor of Roman Emperor Hadrian, and serves as the iconic symbol of Antalya.",
+    "text_zh": "坐落在清澈透明的地中海旁，安塔利亞保存了許多羅馬時期的遺跡。其中最著名的是為紀念羅馬皇帝哈德良而建的哈德良門，它是安塔利亞的標誌性象徵。"
+  },
+  "konya":{
+    "title": "Konya - The City of Legends",
+    "title_zh": "科尼亞 - 傳說之城",
+    "text": "Konya is one of Turkey's oldest cities, believed to be the first city established after the biblical flood receded. It is also a holy site for Islamic Sufism and the birthplace of the Whirling Dervishes.",
+    "text_zh": "科尼亞是土耳其最古老的城市之一，被認為是聖經中大洪水退去後建立的第一座城市。它也是伊斯蘭蘇菲派的聖地和旋轉舞者的發源地。"
+  },
+  "cappadocia":{
+    "title": "Cappadocia - A Magical Fairyland",
+    "title_zh": "卡帕多奇亞 - 神奇的童話仙境",
+    "text": "With countless bizarre rock formations, underground cities, cave churches, and skies filled with hot air balloons at dawn, Cappadocia is a place full of enchanting wonders.",
+    "text_zh": "卡帕多奇亞擁有數不清的奇特岩石地形、地下城市、洞穴教堂，以及黎明時分布滿熱氣球的天空，這裡充滿了令人著迷的奇觀。"
+  },
+  "istanbul":{
+    "title": "Istanbul - Capital of the World",
+    "title_zh": "伊斯坦堡 - 世界首都",
+    "text": "The world's only city spanning two continents, Europe and Asia, Istanbul is rich with historical traces. It is home to the 1500-year-old Hagia Sophia, the unique Blue Mosque, and served as the final stop of the Silk Road and the legendary Orient Express—also marking the end of our journey.",
+    "text_zh": "伊斯坦堡是世界上唯一橫跨歐亞兩大洲的城市，歷史痕跡豐富。這裡有1500年歷史的聖索菲亞大教堂、獨特的藍色清真寺，同時也是絲綢之路和傳奇的東方快車的終點站—這也標誌著我們旅程的結束。"
+  }
+}

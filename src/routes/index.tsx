@@ -7,7 +7,7 @@ export default component$(() => {
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
-    window.scrollTo({top: 0, behavior: 'smooth'});
+    window.scrollTo({top: 0, behavior: 'auto'});
     const target = document.getElementById('parallax-container');
     if (!target) return;
     const observer = new IntersectionObserver(
@@ -31,7 +31,7 @@ export default component$(() => {
       >
         <Parallax />
       </div>
-      <div class="relative mt-[-100vh]">
+      <div class="relative mt-[-90vh]">
         <SvgMap />
       </div>
     </div>

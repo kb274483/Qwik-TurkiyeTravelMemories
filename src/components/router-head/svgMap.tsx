@@ -1,4 +1,7 @@
+/* eslint-disable qwik/jsx-key */
 import { component$, useVisibleTask$, useSignal, $, useTask$ } from '@builder.io/qwik';
+import introduceData from '../../assets/introduce.json';
+
 interface City {
   id: string;
   name: string;
@@ -6,6 +9,18 @@ interface City {
   y: number;
   appearAt: number;
 }
+
+interface IntroduceData {
+  [key: string]: {
+    title: string;
+    title_zh: string;
+    text: string;
+    text_zh: string;
+  };
+}
+
+const typedIntroduceData = introduceData as IntroduceData;
+
 interface cityPng {
   id: string;
   x: number;
@@ -16,27 +31,28 @@ export const SvgMap = component$(() => {
   const isVisible = useSignal(false);
   const isDrawing = useSignal(false);
   const scrollProgress = useSignal(0);
+  const currentCityIndex = useSignal(0);
 
 
   const cities: City[] = [
-    { id: 'istanbul', name: 'Istanbul', x: 135, y: 59, appearAt: 0.20 },
-    { id: 'alacati', name: 'Alacati', x: 38, y: 206, appearAt: 0.32 },
-    { id: 'efes', name: 'Ephesus', x: 71, y: 221, appearAt: 0.44 },
-    { id: 'sirince', name: 'Sirince', x: 110, y: 195, appearAt: 0.56 },
-    { id: 'pamukkale', name: 'Pamukkale', x: 145, y: 228, appearAt: 0.68 },
-    { id: 'antalya', name: 'Antalya', x: 210, y: 278, appearAt: 0.80 },
-    { id: 'konya', name: 'Konya', x: 283, y: 222, appearAt: 0.92 },
-    { id: 'cappadocia', name: 'Cappadocia', x: 378, y: 182, appearAt: 1.04 },
+    { id: 'alacati', name: 'Alacati', x: 38, y: 206, appearAt: 0.20 },
+    { id: 'efes', name: 'Ephesus', x: 71, y: 221, appearAt: 0.30 },
+    { id: 'sirince', name: 'Sirince', x: 110, y: 195, appearAt: 0.40 },
+    { id: 'pamukkale', name: 'Pamukkale', x: 145, y: 228, appearAt: 0.50 },
+    { id: 'antalya', name: 'Antalya', x: 210, y: 278, appearAt: 0.60 },
+    { id: 'konya', name: 'Konya', x: 283, y: 222, appearAt: 0.70 },
+    { id: 'cappadocia', name: 'Cappadocia', x: 378, y: 182, appearAt: 0.80 },
+    { id: 'istanbul', name: 'Istanbul', x: 135, y: 59, appearAt: 0.90 },
   ];
   const cityPng: cityPng[] = [
-    { id: 'istanbul', x: 50, y: 20, appearAt: 0.25 },
-    { id: 'alacati', x:-10, y: 110, appearAt: 0.37 },
-    { id: 'efes', x: 0, y: 200, appearAt: 0.49 },
-    { id: 'sirince', x: 150, y: 125, appearAt: 0.61 },
-    { id: 'pamukkale', x: 135, y: 200, appearAt: 0.73 },
-    { id: 'antalya', x: 190, y: 255, appearAt: 0.85 },
-    { id: 'konya', x: 270, y: 200, appearAt: 0.97 },
-    { id: 'cappadocia', x: 350, y: 170, appearAt: 1.09 },
+    { id: 'alacati', x:-10, y: 110, appearAt: 0.20 },
+    { id: 'efes', x: 0, y: 200, appearAt: 0.30 },
+    { id: 'sirince', x: 150, y: 125, appearAt: 0.40 },
+    { id: 'pamukkale', x: 135, y: 200, appearAt: 0.50 },
+    { id: 'antalya', x: 190, y: 255, appearAt: 0.60 },
+    { id: 'konya', x: 270, y: 200, appearAt: 0.70 },
+    { id: 'cappadocia', x: 350, y: 170, appearAt: 0.80 },
+    { id: 'istanbul', x: 50, y: 20, appearAt: 0.90 },
   ]
   // const connections: Connection[] = [
   //   { id: 'istanbul-alacati', from: 'istanbul', to: 'alacati', appearAt: 0.25 },
@@ -150,6 +166,8 @@ export const SvgMap = component$(() => {
     const mapContainer = document.getElementById('map-container') as HTMLDivElement;
     const recordContainer = document.getElementById('record-container') as HTMLDivElement;
     const wrapperRect = mapWrapper.getBoundingClientRect();
+    const textContainer = document.getElementById('text-container') as HTMLDivElement;
+    console.log(textContainer.childNodes)
 
     const windowScroll = ()=>{
       if(
@@ -160,19 +178,41 @@ export const SvgMap = component$(() => {
         mapContainer.style.top = '50%';
         mapContainer.style.transform = 'translateY(-50%)';
         mapContainer.style.width = '100%';
+        // 
         recordContainer.style.position = 'fixed'; 
         recordContainer.style.top = '50%';
         recordContainer.style.transform = 'translateY(-50%)';
         recordContainer.style.width = '100%';
+        // 
+        textContainer.style.display = 'block';
+        textContainer.style.position = 'fixed';
+        textContainer.style.top = '50%';
+        textContainer.style.transform = 'translateY(-50%)';
+        textContainer.style.width = '100%';
+        // 
+        textContainer.childNodes.forEach((child)=>{
+          (child as HTMLElement).classList.add('text-fadeIn');
+        })
       }else{
         mapContainer.style.position = '';
         mapContainer.style.top = '';
         mapContainer.style.transform = '';
         mapContainer.style.width = '';
+        // 
         recordContainer.style.position = '';
         recordContainer.style.top = '';
         recordContainer.style.transform = '';
         recordContainer.style.width = '';
+        // 
+        textContainer.style.position = '';
+        textContainer.style.top = '';
+        textContainer.style.transform = '';
+        textContainer.style.width = '';
+        textContainer.style.display = 'none';
+        // 
+        textContainer.childNodes.forEach((child)=>{
+          (child as HTMLElement).classList.remove('text-fadeIn');
+        })
       }
     }
     window.addEventListener('scroll',windowScroll)
@@ -219,18 +259,68 @@ export const SvgMap = component$(() => {
       const scrollY = window.scrollY;
       const docHeight = mapWrapper.scrollHeight - window.innerHeight;
       scrollProgress.value = docHeight > 0 ? scrollY / docHeight : 0;
-      console.log('Scroll Progress:', scrollProgress.value);
     };
     window.addEventListener('scroll', updateScrollProgress);
     updateScrollProgress();
     return () => window.removeEventListener('scroll', updateScrollProgress);
   });
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(async ({ track }) => {
+    track(() => currentCityIndex.value);
+    const textContainerLeft = document.querySelector('.text-container-left') as HTMLDivElement;
+    const textContainerRight = document.querySelector('.text-container-right') as HTMLDivElement;
+    if(currentCityIndex.value >= 0){
+      textContainerLeft.classList.add('active');
+      textContainerRight.classList.add('active');
+      setTimeout(()=>{
+        textContainerLeft.classList.remove('active');
+        textContainerRight.classList.remove('active');
+      },1000)
+    }  
+  })
+
+  useTask$(async ({ track }) => {
+    track(() => scrollProgress.value);
+    const currentIndex = cities.findIndex(city => scrollProgress.value < city.appearAt);
+
+    if (currentIndex === -1) {
+      currentCityIndex.value = cities.length - 1;
+    } else {
+      currentCityIndex.value = Math.max(0, currentIndex - 1);
+    }
+  });
 
   return (
     <>
       <div id='map-wrapper'
-        class="relative h-[300dvh] flex items-center"
+        class="relative h-[400dvh] flex items-center"
       >
+        <div id="text-container">
+          <div class="text-container-left slide-left-text">
+            {currentCityIndex.value >= 0 && (
+              <div class="text-content slide-left-text">
+                <h2 class="text-2xl font-bold mb-4 text-white">
+                  {typedIntroduceData[cities[currentCityIndex.value].id].title_zh}
+                </h2>
+                <p class="text-lg text-white">
+                  {typedIntroduceData[cities[currentCityIndex.value].id].text_zh}
+                </p>
+              </div>
+            )}
+          </div>
+          <div class="text-container-right slide-right-text">
+            {currentCityIndex.value >= 0 && (
+              <div class="text-content slide-right-text">
+                <h2 class="text-2xl font-bold mb-4 text-white">
+                  {typedIntroduceData[cities[currentCityIndex.value].id].title}
+                </h2>
+                <p class="text-lg text-white">
+                  {typedIntroduceData[cities[currentCityIndex.value].id].text}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
         <div id="map-container" class="svg-map-container"></div>
         <div id="record-container" class="svg-map-container">
           <svg viewBox="0 0 792 334" class="w-[80%] h-auto">
@@ -333,6 +423,60 @@ export const SvgMap = component$(() => {
               transform: scale(1);
             }
           }
+          #text-container{
+            width: 100%;
+            height: 100%;
+          }
+          .text-fadeIn{
+            animation: fadeInSlide 1s ease-out;
+          }
+          .text-container-left{
+            position: absolute;
+            top: 5%;
+            left: 2%;
+            width:30%;
+          }
+          .text-container-right{
+            position: absolute;
+            bottom: 5%;
+            right: 2%;
+            width: 30%;
+          }
+          .text-content {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 2rem;
+            border-radius: 1rem;
+            backdrop-filter: blur(10px);
+          }
+          .slide-left-text {
+            opacity: 1;
+            transform: translateX(0%);
+            transition: all 0.5s ease;
+          }
+          .slide-right-text {
+            opacity: 1;
+            transform: translateX(0%);
+            transition: all 0.5s ease;
+          }
+          .slide-left-text.active {
+            opacity: 0;
+            transform: translateX(-100%);
+          }
+          .slide-right-text.active {
+            opacity: 0;
+            transform: translateX(100%);
+          }
+          @keyframes fadeInSlide {
+            0% {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            100% {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+          
         `}</style>
       </div>
     </>
