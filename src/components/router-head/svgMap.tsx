@@ -6,10 +6,10 @@ interface City {
   y: number;
   appearAt: number;
 }
-interface Connection {
+interface cityPng {
   id: string;
-  from: string;
-  to: string;
+  x: number;
+  y: number;
   appearAt: number;
 }
 export const SvgMap = component$(() => {
@@ -28,7 +28,7 @@ export const SvgMap = component$(() => {
     { id: 'konya', name: 'Konya', x: 283, y: 222, appearAt: 0.92 },
     { id: 'cappadocia', name: 'Cappadocia', x: 378, y: 182, appearAt: 1.04 },
   ];
-  const cityPng = [
+  const cityPng: cityPng[] = [
     { id: 'istanbul', x: 50, y: 20, appearAt: 0.25 },
     { id: 'alacati', x:-10, y: 110, appearAt: 0.37 },
     { id: 'efes', x: 0, y: 200, appearAt: 0.49 },
