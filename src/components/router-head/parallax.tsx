@@ -91,7 +91,7 @@ export const Parallax = component$(() => {
               i === 2 ?
               '30' : i === 3 ? 
               '70' : i === 4 ? 
-              '120' : '180'
+              '120' : '200'
             }
           >
             <img

@@ -1,6 +1,8 @@
 /* eslint-disable qwik/jsx-key */
 import { component$, useVisibleTask$, useSignal, $, useTask$ } from '@builder.io/qwik';
+import { CardGallery } from './cardGallery';
 import introduceData from '../../assets/introduce.json';
+import photoAlbum from '../../assets/photoAlbum.json';
 
 interface City {
   id: string;
@@ -8,6 +10,14 @@ interface City {
   x: number;
   y: number;
   appearAt: number;
+}
+
+interface PhotoAlbum {
+  id: string;
+  photos: {
+    url: string;
+    info: string;
+  }[];
 }
 
 interface IntroduceData {
@@ -32,7 +42,8 @@ export const SvgMap = component$(() => {
   const isDrawing = useSignal(false);
   const scrollProgress = useSignal(0);
   const currentCityIndex = useSignal(0);
-
+  const photoList = photoAlbum as PhotoAlbum[];
+  const photoProps = useSignal<PhotoAlbum | null>(null);
 
   const cities: City[] = [
     { id: 'alacati', name: 'Alacati', x: 38, y: 206, appearAt: 0.20 },
@@ -54,16 +65,6 @@ export const SvgMap = component$(() => {
     { id: 'cappadocia', x: 350, y: 170, appearAt: 0.80 },
     { id: 'istanbul', x: 50, y: 20, appearAt: 0.90 },
   ]
-  // const connections: Connection[] = [
-  //   { id: 'istanbul-alacati', from: 'istanbul', to: 'alacati', appearAt: 0.25 },
-  //   { id: 'alacati-efes', from: 'alacati', to: 'efes', appearAt: 0.37 },
-  //   { id: 'efes-sirince', from: 'efes', to: 'sirince', appearAt: 0.49 },
-  //   { id: 'sirince-pamukkale', from: 'sirince', to: 'pamukkale', appearAt: 0.61 },
-  //   { id: 'pamukkale-antalya', from: 'pamukkale', to: 'antalya', appearAt: 0.73 },
-  //   { id: 'antalya-konya', from: 'antalya', to: 'konya', appearAt: 0.90 },
-  //   { id: 'konya-cappadocia', from: 'konya', to: 'cappadocia', appearAt: 1.12 },
-  //   { id: 'cappadocia-istanbul', from: 'cappadocia', to: 'istanbul', appearAt: 1.14 },
-  // ];
 
   const loadAndDrawSvg = $(async () => {
     if (isDrawing.value) return;
@@ -167,7 +168,6 @@ export const SvgMap = component$(() => {
     const recordContainer = document.getElementById('record-container') as HTMLDivElement;
     const wrapperRect = mapWrapper.getBoundingClientRect();
     const textContainer = document.getElementById('text-container') as HTMLDivElement;
-    console.log(textContainer.childNodes)
 
     const windowScroll = ()=>{
       if(
@@ -244,14 +244,6 @@ export const SvgMap = component$(() => {
     return () => observer.disconnect();
   });
 
-  useTask$(async ({ track }) => {
-    track(() => isVisible.value);
-    
-    if (isVisible.value && !isDrawing.value) {
-      loadAndDrawSvg();
-    }
-  });
-
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
     const mapWrapper = document.getElementById('map-wrapper') as HTMLDivElement;
@@ -280,6 +272,14 @@ export const SvgMap = component$(() => {
   })
 
   useTask$(async ({ track }) => {
+    track(() => isVisible.value);
+    
+    if (isVisible.value && !isDrawing.value) {
+      loadAndDrawSvg();
+    }
+  });
+
+  useTask$(async ({ track }) => {
     track(() => scrollProgress.value);
     const currentIndex = cities.findIndex(city => scrollProgress.value < city.appearAt);
 
@@ -288,6 +288,17 @@ export const SvgMap = component$(() => {
     } else {
       currentCityIndex.value = Math.max(0, currentIndex - 1);
     }
+  });
+
+  const closeGallery = $(() => {
+    photoProps.value = null;
+  })
+
+  const handleClick = $((imgId: string) => {
+    photoProps.value = null;
+    const photo = photoList.find((p) => p.id === imgId) || null;
+    console.log(photo, 'GOGOGOGO')
+    photoProps.value = photo;
   });
 
   return (
@@ -341,12 +352,9 @@ export const SvgMap = component$(() => {
             {cityPng
               .filter((img) => scrollProgress.value >= img.appearAt)
               .map((img) => {
-                const handleClick = $(() => {
-                  alert(`你點擊了：${img.id}`);
-                });
                 return (
                     <image
-                      onClick$={handleClick}
+                      onClick$={() => handleClick(img.id)}
                       class="city-image"
                       href={`/images/${img.id}.PNG`}
                       x={img.x}
@@ -362,34 +370,6 @@ export const SvgMap = component$(() => {
                     />
                 );
               })}
-
-            {/* 動態連線渲染 */}
-            {/* {connections
-              .filter((conn) => scrollProgress.value >= conn.appearAt)
-              .map((conn) => {
-                const from = cities.find((c) => c.id === conn.from);
-                const to = cities.find((c) => c.id === conn.to);
-                if (!from || !to) return null;
-                // 計算線段長度
-                const dx = to.x - from.x;
-                const dy = to.y - from.y;
-                const length = Math.sqrt(dx * dx + dy * dy);
-
-                return (
-                  <line
-                    key={conn.id}
-                    x1={from.x}
-                    y1={from.y}
-                    x2={to.x}
-                    y2={to.y}
-                    stroke="#c3c3c3"
-                    stroke-width="2"
-                    stroke-dasharray={length}
-                    stroke-dashoffset={length}
-                  />
-                );
-              })} */}
-
           </svg>
         </div>
         <style>{`
@@ -443,7 +423,7 @@ export const SvgMap = component$(() => {
             width: 30%;
           }
           .text-content {
-            background: rgba(255, 255, 255, 0.3);
+            background: rgba(50, 50, 50, 0.7);
             padding: 2rem;
             border-radius: 1rem;
             backdrop-filter: blur(10px);
@@ -479,6 +459,12 @@ export const SvgMap = component$(() => {
           
         `}</style>
       </div>
+      {photoProps.value && (
+        <CardGallery 
+          photoProps={photoProps.value} 
+          closeGallery={closeGallery}
+        />
+      )}
     </>
   );
 });
