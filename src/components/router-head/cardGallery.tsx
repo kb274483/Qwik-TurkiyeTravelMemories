@@ -1,4 +1,10 @@
-import { component$, type PropFunction, useVisibleTask$, useSignal} from "@builder.io/qwik";
+import { 
+  component$, 
+  type PropFunction, 
+  useVisibleTask$, 
+  useSignal,
+  $
+} from "@builder.io/qwik";
 
 interface CardGalleryProps {
   photoProps : {
@@ -18,18 +24,78 @@ interface GridPosition {
   rotateY: number;
 }
 
+interface LightBoxProps {
+  url: string | null;
+  info: string | null;
+  closeLightBox: PropFunction<() => void>;
+}
+
 // 照片尺寸和間距
 const PHOTO_WIDTH = 320; // 照片寬度 
 const PHOTO_HEIGHT = 240; // 照片高度
 const GRID_SPACING = 0; // 網格間距
 
+export const LightBox = component$<LightBoxProps>(({url, info, closeLightBox})=>{
+  const imageLoading = useSignal(true);
+  const infoDisplay = useSignal(false);
+  return (
+    <div class="fixed top-0 left-0 w-full h-full bg-black/50 backdrop-blur-sm z-50 flex justify-center items-center p-16">
+      <div class="absolute w-1/2 h-1/2 rounded-lg transition-all duration-500 ease-in-out bg-white z-10"
+        style={{
+          opacity: infoDisplay.value ? 1 : 0,
+          bottom : infoDisplay.value ? 20 : 100,
+          right : infoDisplay.value ? 20 : 100,
+        }}
+      > 
+        <p class="absolute bottom-0 right-0 p-2 text-end text-xl text-gray-600">
+          {info}
+        </p>
+      </div>
+      <img src={url || ''}
+        key={url}
+        alt="Photo" 
+        width={1920} 
+        height={1080} 
+        class="relative z-50 w-full h-full object-cover rounded-lg"
+        onLoad$={()=>{
+          imageLoading.value = false
+          setTimeout(()=>infoDisplay.value = true , 800)
+        }}
+      />
+      <div class="w-full h-full bg-gray-400/50 animate-pulse transition-opacity duration-500 ease-in-out absolute top-0 left-0"
+        style={{
+          display: imageLoading.value ? 'block' : 'none',
+        }}
+      ></div>
+      <div class="absolute top-4 flex justify-center items-center">
+        <button onClick$={closeLightBox} 
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2">X</button>
+      </div>
+    </div>
+  )
+})  
+
 export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGallery }) => {
   const visible = useSignal(false);
   // 儲存每張相片的最終位置
   const gridPositions = useSignal<GridPosition[]>([]);
+  const lightBoxUrl = useSignal<string | null>(null);
+  const lightBoxVisible = useSignal(false);
+  const lightBoxInfo = useSignal<string | null>(null);
+
   const getSmallPhotoUrl = (url: string) => {
     return url.replace('upload/','upload/t_smell/')
   };
+  const photoLightBox = $((url:string, info:string)=>{
+    lightBoxUrl.value = url;
+    lightBoxVisible.value = true;
+    lightBoxInfo.value = info;  
+  })
+
+  const closeLightBox = $(()=>{
+    lightBoxVisible.value = false;
+    lightBoxUrl.value = null;
+  })
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ cleanup }) => {
@@ -154,7 +220,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
           return (
             <div
               key={photo.url}
-              class="absolute w-72 h-48 rounded shadow-lg overflow-hidden border-b-4 border-r-4 border-white/50" 
+              class="absolute w-72 h-48 rounded shadow-lg overflow-hidden border-b-4 border-r-4 border-white/50"
               style={{
                 left: '50%',
                 top: '50%',
@@ -166,6 +232,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
             >
               <img
                 src={getSmallPhotoUrl(photo.url)}
+                onClick$={()=>photoLightBox(photo.url, photo.info)}
                 alt={photo.info || `Gallery image ${index + 1}`}
                 width={PHOTO_WIDTH} 
                 height={PHOTO_HEIGHT}
@@ -176,6 +243,14 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
           );
         })}
       </div>
+      {
+        lightBoxVisible.value &&
+        <LightBox 
+          url={lightBoxUrl.value || ''} 
+          info={lightBoxInfo.value || null}
+          closeLightBox={closeLightBox}
+        />
+      }
     </div>
   );
 });

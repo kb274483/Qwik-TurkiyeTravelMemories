@@ -2,6 +2,75 @@ import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Parallax } from "~/components/router-head/parallax";
 import { SvgMap } from "~/components/router-head/svgMap";
+
+export const TypingText = component$(() => {
+  const text = "If the Earth were a single state, Istanbul would be its capital.";
+  const displayedText = useSignal('');
+  const isVisible = useSignal(false);
+  const scrollY = useSignal(0);
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(({ track }) => {
+    track(() => isVisible.value);
+    if (!isVisible.value) return;
+
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i <= text.length) {
+        displayedText.value = text.slice(0, i);
+        i++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  });
+
+  // eslint-disable-next-line qwik/no-use-visible-task
+  useVisibleTask$(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      scrollY.value = y;
+      if (y > 100) isVisible.value = true;
+      if (y < 100) isVisible.value = false;
+    };
+
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
+  });
+
+  // 樣式計算
+  const translateY = Math.max(0, 100 - scrollY.value * 0.2);
+
+  return (
+    <div
+      id="typing-text"
+      class="text-2xl text-center text-white font-mono whitespace-pre-wrap w-full mx-auto fixed left-0 z-20 pointer-events-none"
+      style={{
+        top: `${translateY}vh`,
+        transition: 'all 0.2s ease-out',
+      }}
+    >
+      {isVisible.value && (
+        <div>
+          {displayedText.value}
+          <span class="typing-cursor">|</span>
+        </div>
+      )}
+      <style>{`
+        .typing-cursor {
+          animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+          50% { opacity: 0; }
+        }
+      `}</style>
+    </div>
+  );
+});
+
+
 export default component$(() => {
   const isVisible = useSignal(false);
 
@@ -31,6 +100,7 @@ export default component$(() => {
       >
         <Parallax />
       </div>
+      <TypingText />
       <div class="relative mt-[-90vh]">
         <SvgMap />
       </div>
