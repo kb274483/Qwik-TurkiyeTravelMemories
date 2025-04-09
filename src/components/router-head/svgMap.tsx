@@ -1,5 +1,5 @@
 /* eslint-disable qwik/jsx-key */
-import { component$, useVisibleTask$, useSignal, $, useTask$ } from '@builder.io/qwik';
+import { component$, useVisibleTask$, useSignal, $, useTask$, useStyles$ } from '@builder.io/qwik';
 import { CardGallery } from './cardGallery';
 import introduceData from '../../assets/introduce.json';
 import photoAlbum from '../../assets/photoAlbum.json';
@@ -68,6 +68,101 @@ const CityImage = component$((props: {
 });
 
 export const SvgMap = component$(() => {
+  useStyles$(`
+    .svg-map-container svg {
+      width: 80%;
+      height: auto;
+      margin: 0 auto;
+    }
+    .svg-map-container svg path,
+    .svg-map-container svg line,
+    .svg-map-container svg circle,
+    .svg-map-container svg rect {
+      stroke-width: 2;
+      transition: all 0.5s ease;
+    }
+    .city-image {
+      transition: all 0.5s ease;
+      cursor: pointer;
+    }
+    .city-image:hover {
+      filter: brightness(1.2);
+      translate: 0 -10px;
+    }
+    @keyframes imageAppear {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    @keyframes imageDisappear {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+    #text-container {
+      width: 100%;
+      height: 100%;
+    }
+    .text-fadeIn {
+      animation: fadeInSlide 1s ease-out;
+    }
+    .text-container-left {
+      position: absolute;
+      top: 5%;
+      left: 2%;
+      width: 30%;
+    }
+    .text-container-right {
+      position: absolute;
+      bottom: 5%;
+      right: 2%;
+      width: 30%;
+    }
+    .text-content {
+      background: rgba(50, 50, 50, 0.7);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(10px);
+    }
+    .slide-left-text {
+      opacity: 1;
+      transform: translateX(0%);
+      transition: all 0.5s ease;
+    }
+    .slide-right-text {
+      opacity: 1;
+      transform: translateX(0%);
+      transition: all 0.5s ease;
+    }
+    .slide-left-text.active {
+      opacity: 0;
+      transform: translateX(-100%);
+    }
+    .slide-right-text.active {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    @keyframes fadeInSlide {
+      0% {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  `);
   const isVisible = useSignal(false);
   const isDrawing = useSignal(false);
   const scrollProgress = useSignal(0);
@@ -156,7 +251,7 @@ export const SvgMap = component$(() => {
       (
         path as SVGElement &
         { style: CSSStyleDeclaration }
-      ).style.animation = `drawLine 1.5s forwards ease-in-out`;
+      ).style.animation = `drawLine 1s forwards ease-in-out`;
     });
   });
 
@@ -200,6 +295,7 @@ export const SvgMap = component$(() => {
     const textContainer = document.getElementById('text-container') as HTMLDivElement;
 
     const windowScroll = ()=>{
+      console.log(window.scrollY,wrapperRect.top,wrapperRect.bottom)
       if(
         window.scrollY > (wrapperRect.top - 200) && 
         window.scrollY < (wrapperRect.bottom + 200)
@@ -219,10 +315,6 @@ export const SvgMap = component$(() => {
         textContainer.style.top = '50%';
         textContainer.style.transform = 'translateY(-50%)';
         textContainer.style.width = '100%';
-        // 
-        textContainer.childNodes.forEach((child)=>{
-          (child as HTMLElement).classList.add('text-fadeIn');
-        })
       }else{
         mapContainer.style.position = '';
         mapContainer.style.top = '';
@@ -239,13 +331,10 @@ export const SvgMap = component$(() => {
         textContainer.style.transform = '';
         textContainer.style.width = '';
         textContainer.style.display = 'none';
-        // 
-        textContainer.childNodes.forEach((child)=>{
-          (child as HTMLElement).classList.remove('text-fadeIn');
-        })
       }
     }
     window.addEventListener('scroll',windowScroll)
+    windowScroll()
     return ()=>{
       window.removeEventListener('scroll',windowScroll)
     }
@@ -395,102 +484,6 @@ export const SvgMap = component$(() => {
               ))}
           </svg>
         </div>
-        <style>{`
-          .svg-map-container svg {
-            width: 80%;
-            height: auto;
-            margin: 0 auto;
-          }
-          .svg-map-container svg path,
-          .svg-map-container svg line,
-          .svg-map-container svg circle,
-          .svg-map-container svg rect {
-            stroke-width: 2;
-            transition: all 0.5s ease;
-          }
-          .city-image{
-            transition: all 0.5s ease;
-            cursor: pointer;
-          }
-          .city-image:hover{
-            filter: brightness(1.2);
-            translate: 0 -10px;
-          }
-          @keyframes imageAppear {
-            0% {
-              opacity: 0;
-              transform: scale(0.5);
-            }
-            100% {
-              opacity: 1;
-              transform: scale(1);
-            }
-          }
-          @keyframes imageDisappear {
-            0% {
-              opacity: 1;
-              transform: scale(1);
-            }
-            100% {
-              opacity: 0;
-              transform: scale(0.5);
-            }
-          }
-          #text-container{
-            width: 100%;
-            height: 100%;
-          }
-          .text-fadeIn{
-            animation: fadeInSlide 1s ease-out;
-          }
-          .text-container-left{
-            position: absolute;
-            top: 5%;
-            left: 2%;
-            width:30%;
-          }
-          .text-container-right{
-            position: absolute;
-            bottom: 5%;
-            right: 2%;
-            width: 30%;
-          }
-          .text-content {
-            background: rgba(50, 50, 50, 0.7);
-            padding: 2rem;
-            border-radius: 1rem;
-            backdrop-filter: blur(10px);
-          }
-          .slide-left-text {
-            opacity: 1;
-            transform: translateX(0%);
-            transition: all 0.5s ease;
-          }
-          .slide-right-text {
-            opacity: 1;
-            transform: translateX(0%);
-            transition: all 0.5s ease;
-          }
-          .slide-left-text.active {
-            opacity: 0;
-            transform: translateX(-100%);
-          }
-          .slide-right-text.active {
-            opacity: 0;
-            transform: translateX(100%);
-          }
-          @keyframes fadeInSlide {
-            0% {
-              opacity: 0;
-              transform: translateY(30px);
-            }
-            100% {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          
-        `}</style>
       </div>
       {photoProps.value && (
         <CardGallery 

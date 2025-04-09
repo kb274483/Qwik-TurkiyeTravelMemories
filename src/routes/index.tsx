@@ -1,4 +1,4 @@
-import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$, useStyles$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Parallax } from "~/components/router-head/parallax";
 import { SvgMap } from "~/components/router-head/svgMap";
@@ -8,7 +8,14 @@ export const TypingText = component$(() => {
   const displayedText = useSignal('');
   const isVisible = useSignal(false);
   const scrollY = useSignal(0);
-
+  useStyles$(`
+    .typing-cursor {
+      animation: blink 1s step-start infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+  `);
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(({ track }) => {
     track(() => isVisible.value);
@@ -58,14 +65,6 @@ export const TypingText = component$(() => {
           <span class="typing-cursor">|</span>
         </div>
       )}
-      <style>{`
-        .typing-cursor {
-          animation: blink 1s step-start infinite;
-        }
-        @keyframes blink {
-          50% { opacity: 0; }
-        }
-      `}</style>
     </div>
   );
 });
