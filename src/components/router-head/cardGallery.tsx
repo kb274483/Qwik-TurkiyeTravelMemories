@@ -106,9 +106,9 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
     });
 
      // 使用 cleanup 函數確保組件銷毀時恢復 body 滾動
-     cleanup(() => {
-       document.body.style.overflow = 'auto';
-     });
+    cleanup(() => {
+      document.body.style.overflow = 'auto';
+    });
    });
 
   return (
@@ -120,8 +120,13 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
       }}
     >
       <div class="absolute top-4 right-4 z-50">
-        <button onClick$={() => closeGallery()}
-          class="text-white text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2"
+        <button onClick$={() => {
+          visible.value = false;
+          setTimeout(() => {
+            closeGallery()
+          }, 800);
+        }}
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2"
         >
           X
         </button>

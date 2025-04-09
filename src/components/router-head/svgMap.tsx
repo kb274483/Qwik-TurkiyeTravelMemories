@@ -37,6 +37,36 @@ interface cityPng {
   y: number;
   appearAt: number;
 }
+
+const CityImage = component$((props: {
+  id: string;
+  x: number;
+  y: number;
+  isAppear: boolean;
+  onClick$: () => void;
+}) => {
+  
+  return (
+    <image
+      onClick$={props.onClick$}
+      class="city-image"
+      href={`/images/${props.id}.PNG`}
+      x={props.x}
+      y={props.y}
+      width="100"
+      height="100"
+      style={{
+        animation: props.isAppear ? 
+          'imageAppear 0.8s ease forwards' :
+          'imageDisappear 0.8s ease forwards',
+        transformOrigin: 'center center',
+      }}
+      preventdefault:animationend
+      filter="url(#dropShadow)"
+    />
+  );
+});
+
 export const SvgMap = component$(() => {
   const isVisible = useSignal(false);
   const isDrawing = useSignal(false);
@@ -156,7 +186,7 @@ export const SvgMap = component$(() => {
       el.addEventListener('animationend', () => {
         finishedCount++;
         if (finishedCount === paths.length) {
-          isDrawing.value = false; // 全部動畫結束後才可重繪
+          isDrawing.value = false;
         }
       }, { once: true });
     });
@@ -297,7 +327,6 @@ export const SvgMap = component$(() => {
   const handleClick = $((imgId: string) => {
     photoProps.value = null;
     const photo = photoList.find((p) => p.id === imgId) || null;
-    console.log(photo, 'GOGOGOGO')
     photoProps.value = photo;
   });
 
@@ -346,30 +375,24 @@ export const SvgMap = component$(() => {
               ))}
             <defs>
               <filter id="dropShadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="white" flood-opacity="0.8" />
+                <feDropShadow dx="0" dy="4" 
+                  stdDeviation="4" 
+                  flood-color="white" 
+                  flood-opacity="0.5"
+                />
               </filter>
             </defs>
             {cityPng
-              .filter((img) => scrollProgress.value >= img.appearAt)
-              .map((img) => {
-                return (
-                    <image
-                      onClick$={() => handleClick(img.id)}
-                      class="city-image"
-                      href={`/images/${img.id}.PNG`}
-                      x={img.x}
-                      y={img.y}
-                      width="100"
-                      height="100"
-                      opacity="0"
-                      style={{
-                        animation: 'imageAppear 0.8s ease forwards',
-                        transformOrigin: 'center center',
-                      }}
-                      filter="url(#dropShadow)"
-                    />
-                );
-              })}
+              .map((img) => (
+                <CityImage
+                  key={img.id}
+                  id={img.id}
+                  x={img.x}
+                  y={img.y}
+                  isAppear={scrollProgress.value >= img.appearAt}
+                  onClick$={() => handleClick(img.id)}
+                />
+              ))}
           </svg>
         </div>
         <style>{`
@@ -401,6 +424,16 @@ export const SvgMap = component$(() => {
             100% {
               opacity: 1;
               transform: scale(1);
+            }
+          }
+          @keyframes imageDisappear {
+            0% {
+              opacity: 1;
+              transform: scale(1);
+            }
+            100% {
+              opacity: 0;
+              transform: scale(0.5);
             }
           }
           #text-container{
