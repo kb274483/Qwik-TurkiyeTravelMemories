@@ -1,7 +1,8 @@
-import { component$, useSignal, useVisibleTask$, useStyles$ } from "@builder.io/qwik";
+import { component$, useSignal, useVisibleTask$, useStyles$, $ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
 import { Parallax } from "~/components/router-head/parallax";
 import { SvgMap } from "~/components/router-head/svgMap";
+import { LoadingScreen } from "~/components/router-head/LoadingScreen";
 
 export const TypingText = component$(() => {
   const text = "If the Earth were a single state, Istanbul would be its capital.";
@@ -72,6 +73,11 @@ export const TypingText = component$(() => {
 
 export default component$(() => {
   const isVisible = useSignal(false);
+  const isLoading = useSignal(true);
+
+  const handleLoadingComplete = $(() => {
+    isLoading.value = false;
+  });
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
@@ -91,6 +97,12 @@ export default component$(() => {
 
   return (
     <div class="relative overflow-hidden bg-stone-900">  
+      {isLoading.value && (
+        <LoadingScreen 
+          onLoadingComplete$={handleLoadingComplete} 
+        />
+      )}
+      
       <div id="parallax-container"
         style={{
           ...styles.fadeSlideUp,
