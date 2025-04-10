@@ -57,7 +57,7 @@ export const LightBox = component$<LightBoxProps>(({url, info, closeLightBox})=>
         src={url || ''}
         key={url}
         alt="Photo"
-        class={`relative z-40 w-full h-full object-cover rounded-lg transition-opacity duration-500 ${imageLoading.value ? 'opacity-0' : 'opacity-100'}`}
+        class={`relative z-40 w-full h-full object-fill rounded-lg transition-opacity duration-500 ${imageLoading.value ? 'opacity-0' : 'opacity-100'}`}
         onLoad$={() => {
           imageLoading.value = false;
           setTimeout(() => infoDisplay.value = true, 800);
