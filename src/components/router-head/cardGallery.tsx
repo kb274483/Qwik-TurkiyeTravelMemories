@@ -70,7 +70,7 @@ export const LightBox = component$<LightBoxProps>(({url, info, closeLightBox})=>
       ></div>
       <div class="absolute top-4 flex justify-center items-center z-50">
         <button onClick$={closeLightBox} 
-          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2">X</button>
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2 hover:rotate-180 transition-all duration-500 ease-in-out">X</button>
       </div>
     </div>
   )
@@ -193,7 +193,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
             closeGallery()
           }, 800);
         }}
-          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2"
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2 hover:rotate-180 transition-all duration-500 ease-in-out"
         >
           X
         </button>
