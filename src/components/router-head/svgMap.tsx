@@ -295,7 +295,6 @@ export const SvgMap = component$(() => {
     const textContainer = document.getElementById('text-container') as HTMLDivElement;
 
     const windowScroll = ()=>{
-      console.log(window.scrollY,wrapperRect.top,wrapperRect.bottom)
       if(
         window.scrollY > (wrapperRect.top - 200) && 
         window.scrollY < (wrapperRect.bottom + 200)
