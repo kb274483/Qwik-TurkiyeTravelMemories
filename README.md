@@ -1,3 +1,6 @@
+## 因為實在想不到行動裝置的版面應該怎麼呈現比較好，索性放棄了。
+
+
 # Qwik City App ⚡️
 
 - [Qwik Docs](https://qwik.dev/)
