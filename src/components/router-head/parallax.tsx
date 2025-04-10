@@ -14,7 +14,9 @@ export const Parallax = component$(() => {
       t += 0.02;
       const x = Math.sin(t) * 50;
       const y = Math.cos(t) * 50;
-      el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      const scrollOffsetY = parseFloat(el.dataset.scrollY || "0");
+
+      el.style.transform = `translate3d(${x}px, ${y + scrollOffsetY}px, 0)`;
 
       requestAnimationFrame(float);
     };
@@ -49,6 +51,8 @@ export const Parallax = component$(() => {
         
         // 視差圖片
         parallaxItems.forEach((item) => {
+          // 跳過熱氣球
+          if (item.classList.contains('hotAirBalloon')) return; 
           const speed = item.getAttribute('data-speed');
           if (speed) {
             const y = (currentScrollY * parseInt(speed)) / 100;
