@@ -3,6 +3,7 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import { Parallax } from "~/components/router-head/parallax";
 import { SvgMap } from "~/components/router-head/svgMap";
 import { LoadingScreen } from "~/components/router-head/LoadingScreen";
+import { SmoothScroll } from "~/components/router-head/SmoothScroll";
 
 export const TypingText = component$(() => {
   const text = "If the Earth were a single state, Istanbul would be its capital.";
@@ -75,6 +76,28 @@ export default component$(() => {
   const isVisible = useSignal(false);
   const isLoading = useSignal(true);
 
+  useStyles$(`
+    :root {
+      --scroll-speed: 0.15s;
+    }
+    
+    .parallax-container {
+      will-change: transform;
+    }
+    
+    .parallax-element {
+      transition: transform var(--scroll-speed) cubic-bezier(0.25, 0.1, 0.25, 1);
+      will-change: transform;
+    }
+    
+    @media (prefers-reduced-motion: reduce) {
+      :root {
+        --scroll-speed: 0s;
+      }
+    }
+  `);
+
+  // LOADING COMPLETE
   const handleLoadingComplete = $(() => {
     isLoading.value = false;
   });
@@ -97,13 +120,17 @@ export default component$(() => {
 
   return (
     <div class="relative overflow-hidden bg-stone-900">  
-      {isLoading.value && (
+      {
+        isLoading.value && 
         <LoadingScreen 
-          onLoadingComplete$={handleLoadingComplete} 
+          onLoadingComplete$={handleLoadingComplete}
         />
-      )}
+      }
+      
+      <SmoothScroll />
       
       <div id="parallax-container"
+        class="parallax-container"
         style={{
           ...styles.fadeSlideUp,
           ...(isVisible.value ? styles.fadeSlideUpShow : {})
