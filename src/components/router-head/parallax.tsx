@@ -3,6 +3,8 @@ import { component$, useSignal, useVisibleTask$ } from "@builder.io/qwik";
 export const Parallax = component$(() => {
   const imgArr = useSignal<number[]>([2,3,4,5]);
   const isMobile = useSignal(false);
+  const scrollY = useSignal(0);
+  const ticking = useSignal(false);
 
   // eslint-disable-next-line qwik/no-use-visible-task
   useVisibleTask$(() => {
@@ -12,7 +14,9 @@ export const Parallax = component$(() => {
       t += 0.02;
       const x = Math.sin(t) * 50;
       const y = Math.cos(t) * 50;
-      el.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      const scrollOffsetY = parseFloat(el.dataset.scrollY || "0");
+
+      el.style.transform = `translate3d(${x}px, ${y + scrollOffsetY}px, 0)`;
 
       requestAnimationFrame(float);
     };
@@ -27,31 +31,77 @@ export const Parallax = component$(() => {
     }
     checkMobile();
 
-    const scroll = () => {
-      const scrollY = window.scrollY;
+    const updateParallax = () => {
+      const currentScrollY = window.scrollY;
+      scrollY.value = currentScrollY;
+      
       const scrollLimit = window.innerHeight * 0.35;
       const hotAirBalloon = document.querySelector('.hotAirBalloon') as HTMLDivElement;
       const parallaxItems = document.querySelectorAll('.parallax-item') as NodeListOf<HTMLElement>;
       const parallaxTitle = document.getElementById('parallax-title') as HTMLDivElement;
 
-      if(scrollY < scrollLimit) {
-        parallaxTitle.style.transform = `translate3d(0, -${scrollY * 0.6}px, 0)`;
-        hotAirBalloon.style.transform = `translate3d(0, -${scrollY * 0.5}px, 0)`;
+      // 設置限制，避免圖片超出範圍
+      if(currentScrollY < scrollLimit) {
+        // 標題
+        parallaxTitle.style.transform = `translate3d(0, -${currentScrollY * 0.6}px, 0)`;
+        
+        // 熱氣球
+        const baseY = -currentScrollY * 0.5;
+        hotAirBalloon.dataset.scrollY = baseY.toString();
+        
+        // 視差圖片
         parallaxItems.forEach((item) => {
+          // 跳過熱氣球
+          if (item.classList.contains('hotAirBalloon')) return; 
           const speed = item.getAttribute('data-speed');
           if (speed) {
-            const y = (scrollY * parseInt(speed)) / 100;
+            const y = (currentScrollY * parseInt(speed)) / 100;
             item.style.transform = `translate3d(0, -${y}px, 0)`;
           }
-        })
+        });
       }
-    }
+      
+      ticking.value = false;
+    };
 
-    window.addEventListener('scroll', scroll);
+    const requestTick = () => {
+      // 設置節流
+      if (!ticking.value) {
+        requestAnimationFrame(updateParallax);
+        ticking.value = true;
+      }
+    };
+
+    const handleScroll = () => {
+      requestTick();
+    };
+
+    // transform Effect
+    const addSmoothTransition = () => {
+      const parallaxItems = document.querySelectorAll('.parallax-item');
+      const parallaxTitle = document.getElementById('parallax-title');
+      
+      if (parallaxTitle) {
+        parallaxTitle.style.transition = 'transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      }
+      
+      parallaxItems.forEach(item => {
+        (item as HTMLElement).style.transition = 'transform 0.1s cubic-bezier(0.25, 0.1, 0.25, 1)';
+      });
+    };
+    
+    addSmoothTransition();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', checkMobile);
+    
+    // init position
+    updateParallax();
+    
     return () => {
-      window.removeEventListener('scroll', scroll);
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', checkMobile);
     }
-  })
+  });
 
   return (
     <>

@@ -51,25 +51,26 @@ export const LightBox = component$<LightBoxProps>(({url, info, closeLightBox})=>
           {info}
         </p>
       </div>
-      <img src={url || ''}
-        key={url}
-        alt="Photo" 
-        width={1920} 
+      <img
+        width={1920}
         height={1080} 
-        class="relative z-50 w-full h-full object-cover rounded-lg"
-        onLoad$={()=>{
-          imageLoading.value = false
-          setTimeout(()=>infoDisplay.value = true , 800)
+        src={url || ''}
+        key={url}
+        alt="Photo"
+        class={`relative z-40 w-full h-full object-fill rounded-lg transition-opacity duration-500 ${imageLoading.value ? 'opacity-0' : 'opacity-100'}`}
+        onLoad$={() => {
+          imageLoading.value = false;
+          setTimeout(() => infoDisplay.value = true, 800);
         }}
       />
-      <div class="w-full h-full bg-gray-400/50 animate-pulse transition-opacity duration-500 ease-in-out absolute top-0 left-0"
+      <div class="w-full h-full bg-gray-500/50 animate-pulse transition-opacity duration-500 ease-in-out absolute top-0 left-0"
         style={{
           display: imageLoading.value ? 'block' : 'none',
         }}
       ></div>
-      <div class="absolute top-4 flex justify-center items-center">
+      <div class="absolute top-4 flex justify-center items-center z-50">
         <button onClick$={closeLightBox} 
-          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2">X</button>
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2 hover:rotate-180 transition-all duration-500 ease-in-out">X</button>
       </div>
     </div>
   )
@@ -82,7 +83,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
   const lightBoxUrl = useSignal<string | null>(null);
   const lightBoxVisible = useSignal(false);
   const lightBoxInfo = useSignal<string | null>(null);
-
+  const imgLoading = useSignal(true);
   const getSmallPhotoUrl = (url: string) => {
     return url.replace('upload/','upload/t_smell/')
   };
@@ -192,7 +193,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
             closeGallery()
           }, 800);
         }}
-          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2"
+          class="text-white cursor-pointer text-2xl w-12 h-12 font-bold rounded-full bg-white/20 p-2 hover:rotate-180 transition-all duration-500 ease-in-out"
         >
           X
         </button>
@@ -220,7 +221,7 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
           return (
             <div
               key={photo.url}
-              class="absolute w-72 h-48 rounded shadow-lg overflow-hidden border-b-4 border-r-4 border-white/50"
+              class="absolute rounded shadow-lg overflow-hidden border-b-4 border-r-4 w-72 h-48 border-white"
               style={{
                 left: '50%',
                 top: '50%',
@@ -237,8 +238,21 @@ export const CardGallery = component$<CardGalleryProps>(({ photoProps, closeGall
                 width={PHOTO_WIDTH} 
                 height={PHOTO_HEIGHT}
                 class="w-full h-full object-cover cursor-pointer hover:scale-110 transition-all duration-800 ease-in-out"
+                style={{
+                  opacity: imgLoading.value ? 0 : 1,
+                }}
                 loading="lazy"
+                onLoad$={() => {
+                  setTimeout(() => {
+                    imgLoading.value = false;
+                  }, 1000);
+                }}
               />
+              <div class="w-full h-full bg-gray-500/50 animate-pulse transition-opacity duration-500 ease-in-out absolute top-0 left-0"
+                style={{
+                  display: imgLoading.value ? 'block' : 'none',
+                }}
+              ></div>
             </div>
           );
         })}
